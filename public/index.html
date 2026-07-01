@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lilongwe King Sejong Institute — Student Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  :root{
+    --chalk-green: #1f3d2e;
+    --chalk-green-dark: #16291f;
+    --parchment: #f3ead9;
+    --parchment-line: #d9c9a8;
+    --ink: #2a241c;
+    --chalk-white: #f6f3ea;
+    --accent-amber: #c47f2c;
+    --accent-red: #a14438;
+    --accent-good: #4c7a4f;
+    --font-display: 'Georgia', 'Times New Roman', serif;
+    --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-mono: 'Courier New', monospace;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:var(--font-body);
+    background:var(--parchment);
+    color:var(--ink);
+  }
+  .app{
+    display:grid;
+    grid-template-columns:220px 1fr;
+    min-height:100vh;
+  }
+  .sidebar{
+    background:var(--chalk-green);
+    color:var(--chalk-white);
+    padding:24px 18px;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+  }
+  .brand{
+    font-family:var(--font-display);
+    font-size:1.5rem;
+    letter-spacing:0.5px;
+    margin-bottom:6px;
+    border-bottom:1px dashed rgba(246,243,234,0.3);
+    padding-bottom:14px;
+  }
+  .brand small{
+    display:block;
+    font-family:var(--font-mono);
+    font-size:0.65rem;
+    letter-spacing:1.5px;
+    color:#a9c2ab;
+    text-transform:uppercase;
+    margin-top:4px;
+  }
+  .nav-btn{
+    background:none;
+    border:none;
+    color:var(--chalk-white);
+    text-align:left;
+    font-family:var(--font-body);
+    font-size:0.95rem;
+    padding:10px 10px;
+    border-radius:4px;
+    cursor:pointer;
+    opacity:0.75;
+    transition:background 0.15s, opacity 0.15s;
+  }
+  .nav-btn:hover{ opacity:1; background:rgba(255,255,255,0.06); }
+  .nav-btn.active{
+    opacity:1;
+    background:rgba(255,255,255,0.12);
+    font-weight:600;
+  }
+  .subtab-btn{
+    font-family:var(--font-body);
+    border:1px solid var(--parchment-line);
+    background:var(--chalk-white);
+    color:var(--ink);
+    padding:7px 14px;
+    border-radius:20px;
+    font-size:0.82rem;
+    cursor:pointer;
+  }
+  .subtab-btn:hover{ background:#ece1cb; }
+  .subtab-btn.active{
+    background:var(--chalk-green);
+    border-color:var(--chalk-green);
+    color:var(--chalk-white);
+    font-weight:600;
+  }
+  .section-label{
+    font-family:var(--font-mono);
+    font-size:0.72rem;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    color:#6b6049;
+    margin:22px 0 8px;
+  }
+  .nav-count{
+    float:right;
+    font-family:var(--font-mono);
+    font-size:0.75rem;
+    opacity:0.7;
+  }
+  .main{ padding:32px 40px; }
+  .page-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    margin-bottom:22px;
+    border-bottom:2px solid var(--ink);
+    padding-bottom:14px;
+  }
+  .page-header h1{
+    font-family:var(--font-display);
+    margin:0;
+    font-size:1.8rem;
+  }
+  .page-header p{ margin:4px 0 0; color:#5c5341; font-size:0.9rem; }
+  .btn{
+    font-family:var(--font-body);
+    border:none;
+    border-radius:4px;
+    padding:9px 16px;
+    font-size:0.88rem;
+    cursor:pointer;
+    font-weight:600;
+  }
+  .btn-primary{ background:var(--chalk-green); color:var(--chalk-white); }
+  .btn-primary:hover{ background:var(--chalk-green-dark); }
+  .btn-ghost{ background:transparent; color:var(--ink); border:1px solid var(--parchment-line); }
+  .btn-ghost:hover{ background:#ece1cb; }
+  .btn-danger{ background:transparent; color:var(--accent-red); border:1px solid var(--accent-red); }
+  .btn-danger:hover{ background:rgba(161,68,56,0.1); }
+  .btn-small{ padding:5px 10px; font-size:0.78rem; }
+
+  table{ width:100%; border-collapse:collapse; background:var(--chalk-white); border-radius:6px; overflow:hidden; }
+  thead th{
+    text-align:left;
+    font-family:var(--font-mono);
+    font-size:0.72rem;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    color:#6b6049;
+    padding:10px 14px;
+    border-bottom:2px solid var(--parchment-line);
+  }
+  tbody td{
+    padding:11px 14px;
+    border-bottom:1px solid #ece4d2;
+    font-size:0.92rem;
+    vertical-align:middle;
+  }
+  tbody tr:hover{ background:#fbf7ef; }
+  .pill{
+    display:inline-block;
+    padding:2px 9px;
+    border-radius:20px;
+    font-size:0.74rem;
+    font-weight:600;
+  }
+  .pill-good{ background:rgba(76,122,79,0.15); color:var(--accent-good); }
+  .pill-warn{ background:rgba(196,127,44,0.18); color:var(--accent-amber); }
+  .pill-bad{ background:rgba(161,68,56,0.15); color:var(--accent-red); }
+  .row-actions button{ margin-right:6px; }
+
+  .empty-state{
+    text-align:center;
+    padding:60px 20px;
+    background:var(--chalk-white);
+    border-radius:6px;
+    border:1px dashed var(--parchment-line);
+  }
+  .empty-state h3{ font-family:var(--font-display); margin-bottom:6px; }
+  .empty-state p{ color:#6b6049; margin-bottom:16px; }
+
+  .modal-backdrop{
+    display:none;
+    position:fixed; inset:0;
+    background:rgba(22,41,31,0.45);
+    align-items:center; justify-content:center;
+    z-index:50;
+  }
+  .modal-backdrop.open{ display:flex; }
+  .modal{
+    background:var(--chalk-white);
+    border-radius:8px;
+    padding:26px;
+    width:380px;
+    max-width:90vw;
+    box-shadow:0 12px 40px rgba(0,0,0,0.25);
+  }
+  .modal h2{ font-family:var(--font-display); margin:0 0 16px; font-size:1.3rem; }
+  .field{ margin-bottom:14px; }
+  .field label{ display:block; font-size:0.78rem; font-weight:600; margin-bottom:5px; color:#5c5341; }
+  .field input, .field select{
+    width:100%;
+    padding:8px 10px;
+    border:1px solid var(--parchment-line);
+    border-radius:4px;
+    font-size:0.9rem;
+    font-family:var(--font-body);
+    background:#fff;
+  }
+  .field-error{ color:var(--accent-red); font-size:0.76rem; margin-top:4px; display:none; }
+  .field.invalid input, .field.invalid select{ border-color:var(--accent-red); }
+  .field.invalid .field-error{ display:block; }
+  .modal-actions{ display:flex; justify-content:flex-end; gap:8px; margin-top:20px; }
+
+  .toolbar{ display:flex; gap:10px; margin-bottom:16px; align-items:center; }
+  .toolbar input[type=text]{
+    flex:1;
+    padding:9px 12px;
+    border:1px solid var(--parchment-line);
+    border-radius:4px;
+    font-size:0.9rem;
+  }
+
+  .toast{
+    position:fixed; bottom:24px; right:24px;
+    background:var(--chalk-green-dark);
+    color:var(--chalk-white);
+    padding:12px 18px;
+    border-radius:6px;
+    font-size:0.88rem;
+    box-shadow:0 6px 20px rgba(0,0,0,0.2);
+    opacity:0; transform:translateY(8px);
+    transition:opacity 0.2s, transform 0.2s;
+    pointer-events:none;
+    z-index:60;
+  }
+  .toast.show{ opacity:1; transform:translateY(0); }
+
+  .stat-row{ display:flex; gap:14px; margin-bottom:20px; }
+  .stat-card{
+    background:var(--chalk-white);
+    border-radius:6px;
+    padding:14px 18px;
+    flex:1;
+    border-left:4px solid var(--chalk-green);
+  }
+  .stat-card .num{ font-family:var(--font-display); font-size:1.6rem; }
+  .stat-card .label{ font-size:0.75rem; color:#6b6049; text-transform:uppercase; letter-spacing:0.5px; }
+
+  .att-grid{ display:flex; gap:4px; }
+  .att-dot{
+    width:18px; height:18px; border-radius:3px;
+    display:inline-flex; align-items:center; justify-content:center;
+    font-size:0.65rem; cursor:pointer; font-weight:700;
+    border:1px solid var(--parchment-line);
+  }
+  .att-dot.present{ background:var(--accent-good); color:#fff; border-color:var(--accent-good); }
+  .att-dot.absent{ background:var(--accent-red); color:#fff; border-color:var(--accent-red); }
+  .att-dot.unmarked{ background:#fff; color:#bbb; }
+
+  @media (max-width: 720px){
+    .app{ grid-template-columns:1fr; }
+    .sidebar{ flex-direction:row; flex-wrap:wrap; }
+    .main{ padding:20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">King Sejong Institute<small>Lilongwe · Student Management</small></div>
+    <button class="nav-btn active" data-page="students">Students <span class="nav-count" id="navCountStudents"></span></button>
+    <button class="nav-btn" data-page="grades">Grades</button>
+    <button class="nav-btn" data-page="attendance">Attendance</button>
+    <button class="nav-btn" data-page="staff">Staff <span class="nav-count" id="navCountStaff"></span></button>
+  </aside>
+
+  <main class="main">
+
+    <!-- STUDENTS PAGE -->
+    <section id="page-students">
+      <div class="page-header">
+        <div>
+          <h1>Students</h1>
+          <p>Manage your class roster.</p>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button class="btn btn-ghost" id="importStudentsBtn">Import CSV</button>
+          <input type="file" id="studentsCsvInput" accept=".csv" style="display:none;">
+          <button class="btn btn-primary" id="addStudentBtn">+ Add Student</button>
+        </div>
+      </div>
+
+      <div class="stat-row" id="studentStats"></div>
+
+      <div class="toolbar">
+        <input type="text" id="searchInput" placeholder="Search by name or email…">
+      </div>
+
+      <div id="studentsTableWrap"></div>
+    </section>
+
+    <!-- GRADES PAGE -->
+    <section id="page-grades" style="display:none;">
+      <div class="page-header">
+        <div>
+          <h1>Grades</h1>
+          <p>Record subject scores per student.</p>
+        </div>
+      </div>
+      <div id="gradesTableWrap"></div>
+    </section>
+
+    <!-- ATTENDANCE / CLASS LISTS PAGE -->
+    <section id="page-attendance" style="display:none;">
+      <div class="page-header">
+        <div>
+          <h1>Attendance</h1>
+          <p>Class lists, waiting list, and attendance tracking.</p>
+        </div>
+      </div>
+      <div class="subtabs" id="attendanceSubtabs" style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:18px;"></div>
+      <div id="attendanceContentWrap"></div>
+    </section>
+
+    <!-- STAFF PAGE -->
+    <section id="page-staff" style="display:none;">
+      <div class="page-header">
+        <div>
+          <h1>Staff</h1>
+          <p>Teachers and administrators at the institute.</p>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button class="btn btn-ghost" id="importStaffBtn">Import CSV</button>
+          <input type="file" id="staffCsvInput" accept=".csv" style="display:none;">
+          <button class="btn btn-primary" id="addStaffBtn">+ Add Staff</button>
+        </div>
+      </div>
+      <div id="staffTableWrap"></div>
+    </section>
+
+  </main>
+</div>
+
+<!-- Add/Edit Student Modal -->
+<div class="modal-backdrop" id="studentModalBackdrop">
+  <div class="modal">
+    <h2 id="studentModalTitle">Add Student</h2>
+    <form id="studentForm">
+      <input type="hidden" id="studentId">
+      <div class="field" id="field-name">
+        <label for="fName">Full name</label>
+        <input type="text" id="fName" autocomplete="off">
+        <div class="field-error">Enter the student's full name.</div>
+      </div>
+      <div class="field" id="field-email">
+        <label for="fEmail">Email address</label>
+        <input type="text" id="fEmail" autocomplete="off">
+        <div class="field-error">Enter a valid email address.</div>
+      </div>
+      <div class="field" id="field-phone">
+        <label for="fPhone">Phone number</label>
+        <input type="text" id="fPhone" autocomplete="off">
+        <div class="field-error">Enter a phone number.</div>
+      </div>
+      <div class="field" id="field-birthdate">
+        <label for="fBirthdate">Birthdate (for certificate)</label>
+        <input type="date" id="fBirthdate">
+        <div class="field-error">Enter a birthdate.</div>
+      </div>
+      <div class="field" id="field-grade">
+        <label for="fGrade">Class</label>
+        <select id="fGrade">
+          <option value="Waiting List">Waiting List</option>
+          <option value="Basic Korean Class">Basic Korean Class</option>
+          <option value="1A Korean Class">1A Korean Class</option>
+          <option value="1B Korean Class">1B Korean Class</option>
+          <option value="2A Korean Class">2A Korean Class</option>
+          <option value="2B Korean Class">2B Korean Class</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" id="cancelStudentBtn">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="saveStudentBtn">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Delete Confirm Modal -->
+<div class="modal-backdrop" id="deleteModalBackdrop">
+  <div class="modal">
+    <h2>Remove student?</h2>
+    <p id="deleteModalText" style="color:#5c5341;font-size:0.9rem;"></p>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-ghost" id="cancelDeleteBtn">Cancel</button>
+      <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Remove</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Staff Modal -->
+<div class="modal-backdrop" id="staffModalBackdrop">
+  <div class="modal">
+    <h2 id="staffModalTitle">Add Staff</h2>
+    <form id="staffForm">
+      <input type="hidden" id="staffId">
+      <div class="field" id="sfield-name">
+        <label for="sfName">Full name</label>
+        <input type="text" id="sfName" autocomplete="off">
+        <div class="field-error">Enter the staff member's full name.</div>
+      </div>
+      <div class="field" id="sfield-email">
+        <label for="sfEmail">Email</label>
+        <input type="text" id="sfEmail" autocomplete="off">
+        <div class="field-error">Enter a valid email address.</div>
+      </div>
+      <div class="field" id="sfield-role">
+        <label for="sfRole">Role</label>
+        <select id="sfRole">
+          <option value="Teacher">Teacher</option>
+          <option value="Administrator">Administrator</option>
+          <option value="Coordinator">Coordinator</option>
+          <option value="Support Staff">Support Staff</option>
+        </select>
+      </div>
+      <div class="field" id="sfield-class">
+        <label for="sfClass">Assigned class</label>
+        <select id="sfClass">
+          <option value="">— Not class-assigned —</option>
+          <option value="Basic Korean Class">Basic Korean Class</option>
+          <option value="1A Korean Class">1A Korean Class</option>
+          <option value="1B Korean Class">1B Korean Class</option>
+          <option value="2A Korean Class">2A Korean Class</option>
+          <option value="2B Korean Class">2B Korean Class</option>
+        </select>
+      </div>
+      <div class="field" id="sfield-phone">
+        <label for="sfPhone">Phone (optional)</label>
+        <input type="text" id="sfPhone" autocomplete="off">
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" id="cancelStaffBtn">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Delete Staff Confirm Modal -->
+<div class="modal-backdrop" id="deleteStaffModalBackdrop">
+  <div class="modal">
+    <h2>Remove staff member?</h2>
+    <p id="deleteStaffModalText" style="color:#5c5341;font-size:0.9rem;"></p>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-ghost" id="cancelDeleteStaffBtn">Cancel</button>
+      <button type="button" class="btn btn-danger" id="confirmDeleteStaffBtn">Remove</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+   API CLIENT
+   Every read/write goes to the local Express server, which
+   persists to data/db.json. No more in-memory mock state —
+   this is the actual source of truth now.
+   ========================================================= */
+const API = '/api';
+
+async function apiGet(path){
+  const res = await fetch(API + path);
+  if(!res.ok) throw new Error('Request failed: ' + path);
+  return res.json();
+}
+async function apiSend(method, path, body){
+  const res = await fetch(API + path, {
+    method,
+    headers: { 'Content-Type': 'application/json' },
+    body: body !== undefined ? JSON.stringify(body) : undefined,
+  });
+  const data = await res.json().catch(() => ({}));
+  if(!res.ok){
+    const err = new Error(data.error || 'Request failed: ' + path);
+    err.status = res.status;
+    err.data = data;
+    throw err;
+  }
+  return data;
+}
+
+const Api = {
+  getStudents: () => apiGet('/students'),
+  addStudent: (data) => apiSend('POST', '/students', data),
+  updateStudent: (id, data) => apiSend('PUT', `/students/${id}`, data),
+  deleteStudent: (id) => apiSend('DELETE', `/students/${id}`),
+  bulkAddStudents: (rows) => apiSend('POST', '/students/bulk', { rows }),
+  setCompleted: (id, completed) => apiSend('PUT', `/students/${id}`, { completed }),
+
+  getStaffList: () => apiGet('/staff'),
+  addStaff: (data) => apiSend('POST', '/staff', data),
+  updateStaff: (id, data) => apiSend('PUT', `/staff/${id}`, data),
+  deleteStaff: (id) => apiSend('DELETE', `/staff/${id}`),
+  bulkAddStaff: (rows) => apiSend('POST', '/staff/bulk', { rows }),
+
+  getGrades: () => apiGet('/grades'),
+  setGrade: (studentId, subject, score) => apiSend('PUT', '/grades', { studentId, subject, score }),
+
+  getAttendance: () => apiGet('/attendance'),
+  cycleAttendance: (studentId, date) => apiSend('PUT', '/attendance/cycle', { studentId, date }),
+};
+
+/* =========================================================
+   UI STATE & HELPERS
+   ========================================================= */
+let searchTerm = "";
+let deleteTargetId = null;
+let deleteStaffTargetId = null;
+let attendanceSubtab = 'master';
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+function showErrorToast(err){
+  showToast(err.message || "Something went wrong talking to the server.");
+}
+
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function isValidEmail(email){
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function parseCsv(text){
+  const lines = text.split(/\r\n|\n|\r/).filter(l => l.trim().length > 0);
+  if(lines.length === 0) return [];
+  const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+  const rows = [];
+  for(let i=1;i<lines.length;i++){
+    const cells = lines[i].split(',').map(c => c.trim());
+    const row = {};
+    headers.forEach((h, idx) => row[h] = cells[idx] !== undefined ? cells[idx] : '');
+    rows.push(row);
+  }
+  return rows;
+}
+
+function averageFor(studentId, grades){
+  const list = grades.filter(g=>g.studentId===studentId);
+  if(list.length===0) return null;
+  return Math.round(list.reduce((a,g)=>a+g.score,0)/list.length);
+}
+
+/* =========================================================
+   NAVIGATION
+   ========================================================= */
+document.querySelectorAll('.nav-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const page = btn.dataset.page;
+    ['students','grades','attendance','staff'].forEach(p=>{
+      document.getElementById('page-'+p).style.display = p===page ? '' : 'none';
+    });
+    if(page==='students') renderStudents();
+    if(page==='grades') renderGrades();
+    if(page==='attendance') renderAttendance();
+    if(page==='staff') renderStaff();
+  });
+});
+
+/* =========================================================
+   STUDENTS PAGE
+   ========================================================= */
+async function renderStudentStats(students){
+  const byGrade = {};
+  students.forEach(s=> byGrade[s.grade] = (byGrade[s.grade]||0)+1);
+  document.getElementById('studentStats').innerHTML = `
+    <div class="stat-card"><div class="num">${students.length}</div><div class="label">Total Students</div></div>
+    <div class="stat-card"><div class="num">${Object.keys(byGrade).length}</div><div class="label">Grade Levels</div></div>
+  `;
+}
+
+async function renderStudents(){
+  const wrap = document.getElementById('studentsTableWrap');
+  let students, grades;
+  try{
+    [students, grades] = await Promise.all([Api.getStudents(), Api.getGrades()]);
+  } catch(err){
+    wrap.innerHTML = `<div class="empty-state"><h3>Can't reach the server</h3><p>Make sure the backend is running, then refresh.</p></div>`;
+    return;
+  }
+
+  renderStudentStats(students);
+  document.getElementById('navCountStudents').textContent = students.length;
+
+  const term = searchTerm.trim().toLowerCase();
+  const filtered = term
+    ? students.filter(s => s.name.toLowerCase().includes(term) || s.email.toLowerCase().includes(term))
+    : students;
+
+  if(students.length === 0){
+    wrap.innerHTML = `<div class="empty-state">
+      <h3>No students yet</h3>
+      <p>Add your first student to start building the roster.</p>
+      <button class="btn btn-primary" onclick="openStudentModal()">+ Add Student</button>
+    </div>`;
+    return;
+  }
+
+  if(filtered.length === 0){
+    wrap.innerHTML = `<div class="empty-state">
+      <h3>No matches</h3>
+      <p>No students match "${escapeHtml(searchTerm)}".</p>
+    </div>`;
+    return;
+  }
+
+  const rows = filtered.map(s=>{
+    const avg = averageFor(s.id, grades);
+    return `<tr>
+      <td>${escapeHtml(s.name)}</td>
+      <td>${escapeHtml(s.phone||'—')}</td>
+      <td>${escapeHtml(s.email)}</td>
+      <td>${s.birthdate ? escapeHtml(s.birthdate) : '—'}</td>
+      <td>${escapeHtml(s.grade)}</td>
+      <td>${avg===null ? '<span style="color:#999;">No grades</span>' : avg+'%'}</td>
+      <td class="row-actions">
+        <button class="btn btn-ghost btn-small" onclick="openStudentModal(${s.id})">Edit</button>
+        <button class="btn btn-danger btn-small" onclick="openDeleteModal(${s.id})">Remove</button>
+      </td>
+    </tr>`;
+  }).join('');
+
+  wrap.innerHTML = `<table>
+    <thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Birthdate</th><th>Class</th><th>Average</th><th></th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+document.getElementById('searchInput').addEventListener('input', (e)=>{
+  searchTerm = e.target.value;
+  renderStudents();
+});
+
+/* --- Add/Edit modal --- */
+async function openStudentModal(id=null){
+  const backdrop = document.getElementById('studentModalBackdrop');
+  document.getElementById('studentForm').reset();
+  clearFieldErrors();
+  if(id){
+    const students = await Api.getStudents();
+    const s = students.find(s=>s.id===id);
+    if(!s){ showToast("That student no longer exists."); return; }
+    document.getElementById('studentModalTitle').textContent = "Edit Student";
+    document.getElementById('studentId').value = s.id;
+    document.getElementById('fName').value = s.name;
+    document.getElementById('fEmail').value = s.email;
+    document.getElementById('fPhone').value = s.phone || "";
+    document.getElementById('fBirthdate').value = s.birthdate || "";
+    document.getElementById('fGrade').value = s.grade;
+  } else {
+    document.getElementById('studentModalTitle').textContent = "Add Student";
+    document.getElementById('studentId').value = "";
+  }
+  backdrop.classList.add('open');
+}
+function closeStudentModal(){
+  document.getElementById('studentModalBackdrop').classList.remove('open');
+}
+function clearFieldErrors(){
+  document.querySelectorAll('.field').forEach(f=>f.classList.remove('invalid'));
+}
+
+document.getElementById('addStudentBtn').addEventListener('click', ()=>openStudentModal());
+document.getElementById('cancelStudentBtn').addEventListener('click', closeStudentModal);
+document.getElementById('studentModalBackdrop').addEventListener('click', (e)=>{
+  if(e.target.id === 'studentModalBackdrop') closeStudentModal();
+});
+
+document.getElementById('importStudentsBtn').addEventListener('click', ()=>{
+  document.getElementById('studentsCsvInput').click();
+});
+document.getElementById('studentsCsvInput').addEventListener('change', (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = async (ev)=>{
+    try{
+      const rows = parseCsv(ev.target.result).map(r => ({
+        name: r.name || r['full name'] || '',
+        email: r.email || '',
+        phone: r.phone || r['phone number'] || '',
+        birthdate: r.birthdate || r['birth date'] || r.dob || '',
+        grade: r.class || r.grade || r['class name'] || ''
+      }));
+      const result = await Api.bulkAddStudents(rows);
+      showToast(`Imported ${result.added} student(s)${result.skipped ? `, skipped ${result.skipped}` : ''}.`);
+      renderStudents();
+    } catch(err){
+      showErrorToast(err);
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = "";
+});
+
+document.getElementById('studentForm').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  clearFieldErrors();
+
+  const id = document.getElementById('studentId').value;
+  const name = document.getElementById('fName').value.trim();
+  const email = document.getElementById('fEmail').value.trim();
+  const phone = document.getElementById('fPhone').value.trim();
+  const birthdate = document.getElementById('fBirthdate').value;
+  const grade = document.getElementById('fGrade').value;
+
+  let valid = true;
+  if(name.length === 0){ document.getElementById('field-name').classList.add('invalid'); valid = false; }
+  if(email.length === 0 || !isValidEmail(email)){ document.getElementById('field-email').classList.add('invalid'); valid = false; }
+  if(phone.length === 0){ document.getElementById('field-phone').classList.add('invalid'); valid = false; }
+  if(birthdate.length === 0){ document.getElementById('field-birthdate').classList.add('invalid'); valid = false; }
+  if(!valid) return;
+
+  try{
+    if(id){
+      await Api.updateStudent(parseInt(id,10), {name, email, phone, birthdate, grade});
+      showToast("Student updated.");
+    } else {
+      await Api.addStudent({name, email, phone, birthdate, grade});
+      showToast("Student added.");
+    }
+    closeStudentModal();
+    renderStudents();
+  } catch(err){
+    if(err.status === 409){
+      const f = document.getElementById('field-email');
+      f.classList.add('invalid');
+      f.querySelector('.field-error').textContent = err.message;
+    } else {
+      showErrorToast(err);
+    }
+  }
+});
+
+/* --- Delete modal --- */
+async function openDeleteModal(id){
+  deleteTargetId = id;
+  const students = await Api.getStudents();
+  const s = students.find(s=>s.id===id);
+  document.getElementById('deleteModalText').textContent =
+    `This removes ${s ? s.name : 'this student'} and all their grade/attendance records. This can't be undone.`;
+  document.getElementById('deleteModalBackdrop').classList.add('open');
+}
+document.getElementById('cancelDeleteBtn').addEventListener('click', ()=>{
+  document.getElementById('deleteModalBackdrop').classList.remove('open');
+});
+document.getElementById('deleteModalBackdrop').addEventListener('click', (e)=>{
+  if(e.target.id === 'deleteModalBackdrop') document.getElementById('deleteModalBackdrop').classList.remove('open');
+});
+document.getElementById('confirmDeleteBtn').addEventListener('click', async ()=>{
+  if(deleteTargetId != null){
+    try{
+      await Api.deleteStudent(deleteTargetId);
+      showToast("Student removed.");
+    } catch(err){
+      showErrorToast(err);
+    }
+    deleteTargetId = null;
+  }
+  document.getElementById('deleteModalBackdrop').classList.remove('open');
+  renderStudents();
+});
+
+/* =========================================================
+   GRADES PAGE
+   ========================================================= */
+const SUBJECTS = ["Mathematics","English","Science"];
+
+function gradePill(score){
+  if(score === null || score === undefined) return '<span style="color:#999;">—</span>';
+  let cls = score >= 80 ? 'pill-good' : score >= 60 ? 'pill-warn' : 'pill-bad';
+  return `<span class="pill ${cls}">${score}%</span>`;
+}
+
+async function renderGrades(){
+  const wrap = document.getElementById('gradesTableWrap');
+  let students, allGrades;
+  try{
+    [students, allGrades] = await Promise.all([Api.getStudents(), Api.getGrades()]);
+  } catch(err){
+    wrap.innerHTML = `<div class="empty-state"><h3>Can't reach the server</h3><p>Make sure the backend is running, then refresh.</p></div>`;
+    return;
+  }
+
+  if(students.length === 0){
+    wrap.innerHTML = `<div class="empty-state"><h3>No students yet</h3><p>Add students first to record grades.</p></div>`;
+    return;
+  }
+
+  const headerCells = SUBJECTS.map(s=>`<th>${s}</th>`).join('');
+  const rows = students.map(s=>{
+    const cells = SUBJECTS.map(subj=>{
+      const g = allGrades.find(g=>g.studentId===s.id && g.subject===subj);
+      const score = g ? g.score : null;
+      return `<td>
+        <input type="number" min="0" max="100"
+          value="${score===null?'':score}"
+          placeholder="—"
+          style="width:64px;padding:5px 7px;border:1px solid var(--parchment-line);border-radius:4px;"
+          onchange="handleGradeInput(${s.id}, '${subj}', this)">
+      </td>`;
+    }).join('');
+    const avg = averageFor(s.id, allGrades);
+    return `<tr><td>${escapeHtml(s.name)}</td>${cells}<td>${gradePill(avg)}</td></tr>`;
+  }).join('');
+
+  wrap.innerHTML = `<table>
+    <thead><tr><th>Name</th>${headerCells}<th>Average</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+async function handleGradeInput(studentId, subject, input){
+  const raw = input.value.trim();
+  if(raw === ""){ return; }
+  let val = Number(raw);
+  if(isNaN(val)){
+    showToast("Enter a number between 0 and 100.");
+    renderGrades();
+    return;
+  }
+  try{
+    await Api.setGrade(studentId, subject, val);
+    showToast("Grade saved.");
+  } catch(err){
+    showErrorToast(err);
+  }
+  renderGrades();
+}
+
+/* =========================================================
+   ATTENDANCE / CLASS LISTS PAGE
+   ========================================================= */
+const CLASS_TABS = [
+  { key: 'basic', label: 'Basic Class', className: 'Basic Korean Class' },
+  { key: '1a',    label: '1A Class',    className: '1A Korean Class' },
+  { key: '1b',    label: '1B Class',    className: '1B Korean Class' },
+  { key: '2a',    label: '2A Class',    className: '2A Korean Class' },
+  { key: '2b',    label: '2B Class',    className: '2B Korean Class' },
+];
+
+function renderAttendanceSubtabs(){
+  const tabs = [
+    { key:'master', label:'Master Student List' },
+    { key:'waiting', label:'Waiting List' },
+    ...CLASS_TABS.map(c => ({ key:c.key, label:c.label })),
+  ];
+  const nav = document.getElementById('attendanceSubtabs');
+  nav.innerHTML = tabs.map(t =>
+    `<button class="subtab-btn ${attendanceSubtab===t.key?'active':''}" onclick="switchAttendanceSubtab('${t.key}')">${t.label}</button>`
+  ).join('');
+}
+
+function switchAttendanceSubtab(key){
+  attendanceSubtab = key;
+  renderAttendance();
+}
+
+async function renderAttendance(){
+  renderAttendanceSubtabs();
+  const wrap = document.getElementById('attendanceContentWrap');
+
+  let students, attendanceData;
+  try{
+    [students, attendanceData] = await Promise.all([Api.getStudents(), Api.getAttendance()]);
+  } catch(err){
+    wrap.innerHTML = `<div class="empty-state"><h3>Can't reach the server</h3><p>Make sure the backend is running, then refresh.</p></div>`;
+    return;
+  }
+  const { attendance, days } = attendanceData;
+
+  if(students.length === 0){
+    wrap.innerHTML = `<div class="empty-state"><h3>No students yet</h3><p>Add students first to build class lists.</p></div>`;
+    return;
+  }
+
+  if(attendanceSubtab === 'master'){
+    wrap.innerHTML = studentListTable(students, { showClass:true });
+    return;
+  }
+
+  if(attendanceSubtab === 'waiting'){
+    const waiting = students.filter(s => s.grade === 'Waiting List');
+    if(waiting.length === 0){
+      wrap.innerHTML = `<div class="empty-state"><h3>Waiting list is empty</h3><p>Students assigned no class show up here.</p></div>`;
+      return;
+    }
+    wrap.innerHTML = studentListTable(waiting, { showAssignAction:true });
+    return;
+  }
+
+  const tab = CLASS_TABS.find(t => t.key === attendanceSubtab);
+  if(!tab) return;
+
+  const inClass = students.filter(s => s.grade === tab.className && !s.completed);
+  const completed = students.filter(s => s.grade === tab.className && s.completed);
+  const headerCells = days.map(d=>`<th>${d.slice(5)}</th>`).join('');
+
+  let html = `<div class="section-label">Currently Enrolled — ${escapeHtml(tab.className)}</div>`;
+  if(inClass.length === 0){
+    html += `<div class="empty-state"><h3>No students enrolled</h3><p>Assign students to this class from the Students or Waiting List pages.</p></div>`;
+  } else {
+    const rows = inClass.map(s=>{
+      const cells = days.map(d=>{
+        const status = (attendance[s.id] && attendance[s.id][d]) || 'unmarked';
+        const label = status === 'present' ? 'P' : status === 'absent' ? 'A' : '';
+        return `<td><div class="att-dot ${status}" onclick="handleAttendanceClick(${s.id}, '${d}')">${label}</div></td>`;
+      }).join('');
+      return `<tr>
+        <td>${escapeHtml(s.name)}</td>
+        ${cells}
+        <td><button class="btn btn-ghost btn-small" onclick="toggleStudentCompleted(${s.id}, true)">Mark Completed</button></td>
+      </tr>`;
+    }).join('');
+    html += `<table>
+      <thead><tr><th>Name</th>${headerCells}<th></th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+  }
+
+  html += `<div class="section-label">Completed — ${escapeHtml(tab.className)}</div>`;
+  if(completed.length === 0){
+    html += `<div class="empty-state"><h3>No completions yet</h3><p>Students who finish this class will appear here.</p></div>`;
+  } else {
+    const rows = completed.map(s => `<tr>
+      <td>${escapeHtml(s.name)}</td>
+      <td>${escapeHtml(s.phone||'—')}</td>
+      <td>${escapeHtml(s.email)}</td>
+      <td>${s.birthdate ? escapeHtml(s.birthdate) : '—'}</td>
+      <td><button class="btn btn-ghost btn-small" onclick="toggleStudentCompleted(${s.id}, false)">Move back to enrolled</button></td>
+    </tr>`).join('');
+    html += `<table>
+      <thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Birthdate</th><th></th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+  }
+
+  wrap.innerHTML = html;
+}
+
+function studentListTable(list, opts={}){
+  const rows = list.map(s => `<tr>
+    <td>${escapeHtml(s.name)}</td>
+    <td>${escapeHtml(s.phone||'—')}</td>
+    <td>${escapeHtml(s.email)}</td>
+    <td>${s.birthdate ? escapeHtml(s.birthdate) : '—'}</td>
+    ${opts.showClass ? `<td>${escapeHtml(s.grade)}</td>` : ''}
+    ${opts.showAssignAction ? `<td><button class="btn btn-primary btn-small" onclick="openStudentModal(${s.id})">Assign Class</button></td>` : ''}
+  </tr>`).join('');
+  return `<table>
+    <thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Birthdate</th>${opts.showClass?'<th>Class</th>':''}${opts.showAssignAction?'<th></th>':''}</tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+async function handleAttendanceClick(studentId, date){
+  try{
+    await Api.cycleAttendance(studentId, date);
+  } catch(err){
+    showErrorToast(err);
+  }
+  renderAttendance();
+}
+
+async function toggleStudentCompleted(studentId, value){
+  try{
+    await Api.setCompleted(studentId, value);
+    showToast(value ? "Marked as completed." : "Moved back to enrolled.");
+  } catch(err){
+    showErrorToast(err);
+  }
+  renderAttendance();
+}
+
+/* =========================================================
+   STAFF PAGE
+   ========================================================= */
+async function renderStaff(){
+  const wrap = document.getElementById('staffTableWrap');
+  let all;
+  try{
+    all = await Api.getStaffList();
+  } catch(err){
+    wrap.innerHTML = `<div class="empty-state"><h3>Can't reach the server</h3><p>Make sure the backend is running, then refresh.</p></div>`;
+    return;
+  }
+  document.getElementById('navCountStaff').textContent = all.length;
+
+  if(all.length === 0){
+    wrap.innerHTML = `<div class="empty-state">
+      <h3>No staff yet</h3>
+      <p>Add your first staff member or import a CSV.</p>
+      <button class="btn btn-primary" onclick="openStaffModal()">+ Add Staff</button>
+    </div>`;
+    return;
+  }
+
+  const rows = all.map(s=>`<tr>
+      <td>${escapeHtml(s.name)}</td>
+      <td>${escapeHtml(s.email)}</td>
+      <td>${escapeHtml(s.role)}</td>
+      <td>${s.assignedClass ? escapeHtml(s.assignedClass) : '<span style="color:#999;">—</span>'}</td>
+      <td>${s.phone ? escapeHtml(s.phone) : '<span style="color:#999;">—</span>'}</td>
+      <td class="row-actions">
+        <button class="btn btn-ghost btn-small" onclick="openStaffModal(${s.id})">Edit</button>
+        <button class="btn btn-danger btn-small" onclick="openDeleteStaffModal(${s.id})">Remove</button>
+      </td>
+    </tr>`).join('');
+
+  wrap.innerHTML = `<table>
+    <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Class</th><th>Phone</th><th></th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+async function openStaffModal(id=null){
+  const backdrop = document.getElementById('staffModalBackdrop');
+  document.getElementById('staffForm').reset();
+  document.querySelectorAll('#staffForm .field').forEach(f=>f.classList.remove('invalid'));
+  if(id){
+    const all = await Api.getStaffList();
+    const s = all.find(s=>s.id===id);
+    if(!s){ showToast("That staff member no longer exists."); return; }
+    document.getElementById('staffModalTitle').textContent = "Edit Staff";
+    document.getElementById('staffId').value = s.id;
+    document.getElementById('sfName').value = s.name;
+    document.getElementById('sfEmail').value = s.email;
+    document.getElementById('sfRole').value = s.role;
+    document.getElementById('sfClass').value = s.assignedClass || "";
+    document.getElementById('sfPhone').value = s.phone || "";
+  } else {
+    document.getElementById('staffModalTitle').textContent = "Add Staff";
+    document.getElementById('staffId').value = "";
+  }
+  backdrop.classList.add('open');
+}
+function closeStaffModal(){
+  document.getElementById('staffModalBackdrop').classList.remove('open');
+}
+document.getElementById('addStaffBtn').addEventListener('click', ()=>openStaffModal());
+document.getElementById('cancelStaffBtn').addEventListener('click', closeStaffModal);
+document.getElementById('staffModalBackdrop').addEventListener('click', (e)=>{
+  if(e.target.id === 'staffModalBackdrop') closeStaffModal();
+});
+
+document.getElementById('staffForm').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  document.querySelectorAll('#staffForm .field').forEach(f=>f.classList.remove('invalid'));
+
+  const id = document.getElementById('staffId').value;
+  const name = document.getElementById('sfName').value.trim();
+  const email = document.getElementById('sfEmail').value.trim();
+  const role = document.getElementById('sfRole').value;
+  const assignedClass = document.getElementById('sfClass').value;
+  const phone = document.getElementById('sfPhone').value.trim();
+
+  let valid = true;
+  if(name.length === 0){ document.getElementById('sfield-name').classList.add('invalid'); valid = false; }
+  if(email.length === 0 || !isValidEmail(email)){ document.getElementById('sfield-email').classList.add('invalid'); valid = false; }
+  if(!valid) return;
+
+  try{
+    if(id){
+      await Api.updateStaff(parseInt(id,10), {name, email, role, assignedClass, phone});
+      showToast("Staff member updated.");
+    } else {
+      await Api.addStaff({name, email, role, assignedClass, phone});
+      showToast("Staff member added.");
+    }
+    closeStaffModal();
+    renderStaff();
+  } catch(err){
+    if(err.status === 409){
+      const f = document.getElementById('sfield-email');
+      f.classList.add('invalid');
+      f.querySelector('.field-error').textContent = err.message;
+    } else {
+      showErrorToast(err);
+    }
+  }
+});
+
+async function openDeleteStaffModal(id){
+  deleteStaffTargetId = id;
+  const all = await Api.getStaffList();
+  const s = all.find(s=>s.id===id);
+  document.getElementById('deleteStaffModalText').textContent =
+    `This removes ${s ? s.name : 'this staff member'} from the staff list. This can't be undone.`;
+  document.getElementById('deleteStaffModalBackdrop').classList.add('open');
+}
+document.getElementById('cancelDeleteStaffBtn').addEventListener('click', ()=>{
+  document.getElementById('deleteStaffModalBackdrop').classList.remove('open');
+});
+document.getElementById('deleteStaffModalBackdrop').addEventListener('click', (e)=>{
+  if(e.target.id === 'deleteStaffModalBackdrop') document.getElementById('deleteStaffModalBackdrop').classList.remove('open');
+});
+document.getElementById('confirmDeleteStaffBtn').addEventListener('click', async ()=>{
+  if(deleteStaffTargetId != null){
+    try{
+      await Api.deleteStaff(deleteStaffTargetId);
+      showToast("Staff member removed.");
+    } catch(err){
+      showErrorToast(err);
+    }
+    deleteStaffTargetId = null;
+  }
+  document.getElementById('deleteStaffModalBackdrop').classList.remove('open');
+  renderStaff();
+});
+
+document.getElementById('importStaffBtn').addEventListener('click', ()=>{
+  document.getElementById('staffCsvInput').click();
+});
+document.getElementById('staffCsvInput').addEventListener('change', (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = async (ev)=>{
+    try{
+      const rows = parseCsv(ev.target.result).map(r => ({
+        name: r.name || r['full name'] || '',
+        email: r.email || '',
+        role: r.role || 'Teacher',
+        assignedClass: r.class || r['assigned class'] || '',
+        phone: r.phone || ''
+      }));
+      const result = await Api.bulkAddStaff(rows);
+      showToast(`Imported ${result.added} staff member(s)${result.skipped ? `, skipped ${result.skipped}` : ''}.`);
+      renderStaff();
+    } catch(err){
+      showErrorToast(err);
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = "";
+});
+
+/* =========================================================
+   INIT
+   ========================================================= */
+renderStudents();
+</script>
+
+</body>
+</html>

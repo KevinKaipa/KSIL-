@@ -1,0 +1,95 @@
+{
+  "students": [
+    {
+      "id": 4,
+      "name": "Ellanive Kasamba",
+      "email": "ellanive@gmail.com",
+      "phone": "099922288",
+      "birthdate": "2003-12-21",
+      "grade": "2B Korean Class",
+      "completed": false
+    },
+    {
+      "id": 6,
+      "name": "Tumpalle Kasamba",
+      "email": "tumpalle@gmail.com",
+      "phone": "099999234",
+      "birthdate": "2000-02-04",
+      "grade": "2B Korean Class",
+      "completed": false
+    },
+    {
+      "id": 7,
+      "name": "Evance Zingwangwa",
+      "email": "evance23@gmail.com",
+      "phone": "0999234568",
+      "birthdate": "2000-05-07",
+      "grade": "2B Korean Class",
+      "completed": false
+    },
+    {
+      "id": 8,
+      "name": "Maryiannie Timothy",
+      "email": "maryanie234@gmail.com",
+      "phone": "0999876532",
+      "birthdate": "2002-09-01",
+      "grade": "2B Korean Class",
+      "completed": false
+    },
+    {
+      "id": 9,
+      "name": "Alinafe Mtekateka",
+      "email": "alinafe67@gmail.com",
+      "phone": "0999834557",
+      "birthdate": "2004-02-05",
+      "grade": "1A Korean Class",
+      "completed": false
+    }
+  ],
+  "staff": [
+    {
+      "id": 3,
+      "name": "Kevin Kaipa",
+      "email": "kevink@dyuni.ac.mw",
+      "role": "Support Staff",
+      "assignedClass": "",
+      "phone": "0992601990"
+    },
+    {
+      "id": 4,
+      "name": "Ms. Sonia Yim",
+      "email": "soniayim1234@gmail.com",
+      "role": "Administrator",
+      "assignedClass": "",
+      "phone": "0999445552"
+    },
+    {
+      "id": 5,
+      "name": "Ms. Clara Cho Yungduk",
+      "email": "clara234@gmail.com",
+      "role": "Administrator",
+      "assignedClass": "",
+      "phone": "09987766534"
+    },
+    {
+      "id": 6,
+      "name": "Ms. Christabell Seo",
+      "email": "seo345@gmail.com",
+      "role": "Teacher",
+      "assignedClass": "2A Korean Class",
+      "phone": "0999876354"
+    },
+    {
+      "id": 7,
+      "name": "Mr. Kim",
+      "email": "kim56@gmail.com",
+      "role": "Teacher",
+      "assignedClass": "Basic Korean Class",
+      "phone": "099876534562"
+    }
+  ],
+  "grades": [],
+  "attendance": {},
+  "nextStudentId": 10,
+  "nextStaffId": 8
+}
